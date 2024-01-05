@@ -1,0 +1,1441 @@
+{
+	"info": {
+		"_postman_id": "ef0c1ad2-7f8f-41a6-9874-14858eb9911d",
+		"name": "Hotel Employees API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30599699"
+	},
+	"item": [
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "200 OK",
+					"item": [
+						{
+							"name": "Get status 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Two ways to validate status code:\r",
+											"//1. using \"to have\" for a given code\r",
+											"pm.test(\"Status code is 200 v1\", () => {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"//2. using \"expect\" for status code text\r",
+											"pm.test(\"Status code is 200 v2\", () => {\r",
+											"    pm.expect(pm.response.status).to.eql(\"OK\");\r",
+											"});\r",
+											"\r",
+											"//Validating if response is JSON format\r",
+											"pm.test(\"Response is JSON\", () => {\r",
+											"    pm.expect(pm.response).to.be.json;\r",
+											"});\r",
+											"\r",
+											"//Validating JSON schema\r",
+											"pm.test(\"Schema is valid\", () => {\r",
+											"    const schema = {\r",
+											"        type: \"object\",\r",
+											"        properties: {\r",
+											"            status: {\r",
+											"                type: \"string\"\r",
+											"            }\r",
+											"        },\r",
+											"        required: [\"status\"],\r",
+											"        additionalProperties: false\r",
+											"    };\r",
+											"    pm.response.to.have.jsonSchema(schema);\r",
+											"});\r",
+											"\r",
+											"//Parsing JSON response\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"//Validating if JSON response is a string type\r",
+											"pm.test(\"Response is a string type\", () => {\r",
+											"    pm.expect(responseJson.status).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"//Validating if response is an expected text\r",
+											"pm.test(\"Response is expected text\", () => {\r",
+											"    pm.expect(responseJson.status).to.eql(\"API is UP and running.\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"status"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get status 200",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/status",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"status"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 15 Dec 2023 18:39:41 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"API is UP and running.\"\n}"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Employee",
+			"item": [
+				{
+					"name": "Create",
+					"item": [
+						{
+							"name": "201 Created",
+							"item": [
+								{
+									"name": "Add employee 201",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"//Storing the (dynamically) generated employee name as a variable to validate length and - if correct - store as a collection variable\r",
+													"var randomName = pm.collectionVariables.replaceIn(\"{{$randomFullName}}\");\r",
+													"\r",
+													"// //If randomName is too short (<3) or too long (>20), the dynamic variable is generated again\r",
+													"while (randomName.length < 3 || randomName.length > 20)\r",
+													"{\r",
+													"    randomName = pm.collectionVariables.replaceIn(\"{{$randomFullName}}\");\r",
+													"}\r",
+													"\r",
+													"//Storing randomName with correct length as a collection variable to be used in the body \r",
+													"pm.collectionVariables.set(\"employeeName\", randomName);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 201\", () => {\r",
+													"    pm.response.to.have.status(201);\r",
+													"});\r",
+													"\r",
+													"//Validating if response is JSON format\r",
+													"pm.test(\"Response is JSON\", () => {\r",
+													"    pm.expect(pm.response).to.be.json;\r",
+													"});\r",
+													"\r",
+													"//Validating JSON schema\r",
+													"pm.test(\"Schema is valid\", () => {\r",
+													"    const schema = {\r",
+													"        type: \"object\",\r",
+													"        properties: {\r",
+													"            id: {\r",
+													"                type: \"integer\"\r",
+													"            },\r",
+													"            name: {\r",
+													"                type: \"string\"\r",
+													"            }\r",
+													"        },\r",
+													"        required: [\"id\", \"name\"],\r",
+													"        additionalProperties: false\r",
+													"    };\r",
+													"    pm.response.to.have.jsonSchema(schema);\r",
+													"});\r",
+													"\r",
+													"//Parsing JSON response\r",
+													"const responseJson = pm.response.json();\r",
+													"\r",
+													"//Validating if response contains \"id\" which is an integer\r",
+													"pm.test(\"Response contains id /integer\", () => {\r",
+													"    pm.expect(responseJson.id).to.be.a(\"number\");\r",
+													"});\r",
+													"\r",
+													"//Validating if response contains \"name\" which is a string\r",
+													"pm.test(\"Response contains name /string\", () => {\r",
+													"    pm.expect(responseJson.name).to.be.a(\"string\");\r",
+													"});\r",
+													"\r",
+													"//Storing the generated employee id as a collection variable\r",
+													"pm.collectionVariables.set(\"employeeId\", responseJson.id);\r",
+													"\r",
+													"console.log(responseJson);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"{{employeeName}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Add employee 201",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n  \"name\": \"{{employeeName}}\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/employee",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"employee"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "Date",
+													"value": "Fri, 15 Dec 2023 18:51:42 GMT"
+												},
+												{
+													"key": "Server",
+													"value": "Kestrel"
+												},
+												{
+													"key": "Location",
+													"value": "http://192.168.200.220:5167/api/employee/109"
+												},
+												{
+													"key": "Transfer-Encoding",
+													"value": "chunked"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 109,\n    \"name\": \"Blake Maggio\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "400 Bad request",
+							"item": [
+								{
+									"name": "Add employee 400 - name too short",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"Jo\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add employee 400 - name too long",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"Kendor Kabonka Junior\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add employee 400 - name as white spaces",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"   \"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Read",
+					"item": [
+						{
+							"name": "200 OK",
+							"item": [
+								{
+									"name": "Get employee by id 200",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 200\", () => {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"//Verifying if response is in JSON format\r",
+													"pm.test(\"Response is JSON\", () => {\r",
+													"    pm.expect(pm.response).to.be.json;\r",
+													"});\r",
+													"\r",
+													"//Validating JSON schema\r",
+													"pm.test(\"Schema is valid\", () => {\r",
+													"    const schema = {\r",
+													"        type: \"object\",\r",
+													"        properties: {\r",
+													"            id: {\r",
+													"                type: \"integer\"\r",
+													"            },\r",
+													"            name: {\r",
+													"                type: \"string\"\r",
+													"            }\r",
+													"        },\r",
+													"        required: [\"id\", \"name\"],\r",
+													"        additionalProperties: false\r",
+													"    };\r",
+													"    pm.response.to.have.jsonSchema(schema);\r",
+													"});\r",
+													"\r",
+													"//Parsing JSON reponse to verify data\r",
+													"const responseJson = pm.response.json();\r",
+													"\r",
+													"//Verifying if reponse contains \"name\" property\r",
+													"pm.test(\"Response contains 'name' property\", () => {\r",
+													"    pm.expect(responseJson).to.have.property(\"name\");\r",
+													"});\r",
+													"\r",
+													"//Verifying if \"name\" property is a string\r",
+													"pm.test(\"Response is a string type\", () => {\r",
+													"    pm.expect(responseJson.name).to.be.a(\"string\");\r",
+													"});\r",
+													"\r",
+													"//Verifying if \"name\" is correct = matches employeeName\r",
+													"pm.test(\"Property 'name' is correct\", () => {\r",
+													"    pm.expect(responseJson.name).to.eql(pm.collectionVariables.get(\"employeeName\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{employeeId}}"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Get employee by id 200",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/employee/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"employee",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "{{employeeId}}"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "Date",
+													"value": "Fri, 15 Dec 2023 18:59:51 GMT"
+												},
+												{
+													"key": "Server",
+													"value": "Kestrel"
+												},
+												{
+													"key": "Transfer-Encoding",
+													"value": "chunked"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 110,\n    \"name\": \"Mr. Caleb Dietrich\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Get employee by name 200",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 200\", () => {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"//Verifying if response is in JSON format\r",
+													"pm.test(\"Response is JSON\", () => {\r",
+													"    pm.expect(pm.response).to.be.json;\r",
+													"});\r",
+													"\r",
+													"//Validating JSON schema\r",
+													"pm.test(\"Schema is valid\", () => {\r",
+													"    const schema = {\r",
+													"        type: \"array\",\r",
+													"        properties: {\r",
+													"            id: {\r",
+													"                type: \"integer\"\r",
+													"            },\r",
+													"            name: {\r",
+													"                type: \"string\"\r",
+													"            }\r",
+													"        },\r",
+													"        required: [\"id\", \"name\"],\r",
+													"        additionalProperties: false\r",
+													"    };\r",
+													"    pm.response.to.have.jsonSchema(schema);\r",
+													"});\r",
+													"\r",
+													"//Parsing JSON response to verify data\r",
+													"const responseJson = pm.response.json();\r",
+													"\r",
+													"//Verifying if reponse contains \"id\" property\r",
+													"pm.test(\"Response contains 'id' property\", () => {\r",
+													"    responseJson.forEach(o => {\r",
+													"        pm.expect(o).to.have.property(\"id\");\r",
+													"    });\r",
+													"});\r",
+													"\r",
+													"//Verifying if \"id\" property is an integer\r",
+													"pm.test(\"Property 'id(s)' is an integer\", () => {\r",
+													"    responseJson.forEach(o => {\r",
+													"        pm.expect(o.id).to.be.a(\"number\");\r",
+													"    });\r",
+													"});\r",
+													"\r",
+													"//Verifying if \"id\" is correct (matches employeeId)\r",
+													"pm.test(\"Property 'id' is correct\", () => {\r",
+													"    const responseIds = responseJson.map((empId) => empId.id);\r",
+													"    pm.expect(responseIds).to.include(pm.collectionVariables.get(\"employeeId\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":name"
+											],
+											"variable": [
+												{
+													"key": "name",
+													"value": "{{employeeName}}"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Get employee by name 200",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/employee/:name",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"employee",
+														":name"
+													],
+													"variable": [
+														{
+															"key": "name",
+															"value": "{{employeeName}}"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "Date",
+													"value": "Fri, 15 Dec 2023 19:04:54 GMT"
+												},
+												{
+													"key": "Server",
+													"value": "Kestrel"
+												},
+												{
+													"key": "Transfer-Encoding",
+													"value": "chunked"
+												}
+											],
+											"cookie": [],
+											"body": "[\n    {\n        \"id\": 110,\n        \"name\": \"Mr. Caleb Dietrich\"\n    }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "400 Bad request",
+							"item": [
+								{
+									"name": "Get employee by id 400",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "-1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get employee by name 400",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":name"
+											],
+											"variable": [
+												{
+													"key": "name",
+													"value": "\"\""
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "404 Not found",
+							"item": [
+								{
+									"name": "Get employee by id 404",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 404\", () => {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"//Creating invalidId variable (non-existing: last employeeId generated + 1):\r",
+													"\r",
+													"//1. temporaryId variable stores the most recent employeeId\r",
+													"let temporaryId = pm.collectionVariables.get(\"employeeId\");\r",
+													"\r",
+													"//2. adding +1 to the employeeId to create a non-existing Id\r",
+													"let invalidId = temporaryId + 1;\r",
+													"\r",
+													"//3. setting the invalidId as a collection variable to use a parameter for this GET request\r",
+													"pm.collectionVariables.set(\"invalidId\", invalidId);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{invalidId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get employee by name 404",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 404\", () => {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":name"
+											],
+											"variable": [
+												{
+													"key": "name",
+													"value": "\" \""
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Update",
+					"item": [
+						{
+							"name": "204 No content",
+							"item": [
+								{
+									"name": "Update employee 204",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 204\", () => {\r",
+													"    pm.response.to.have.status(204);\r",
+													"});\r",
+													"\r",
+													"console.log(pm.collectionVariables.get(\"employeeNameUpdated\"));"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"//Storing the (dynamically) generated employee name as a variable to validate length and - if correct - store as a collection variable\r",
+													"var randomNameUpdated = pm.collectionVariables.replaceIn(\"{{$randomFullName}}\");\r",
+													"\r",
+													"//If randomNameUpdated is too short (<3) or too long ()>20), the dynamic variable is generated again\r",
+													"while (randomNameUpdated.length < 3 || randomNameUpdated.length > 20)\r",
+													"{\r",
+													"    console.log(randomNameUpdated, \" length: \" + randomNameUpdated.length);\r",
+													"    randomNameUpdated = pm.collectionVariables.replaceIn(\"{{$randomFullName}}\");\r",
+													"}\r",
+													"\r",
+													"//Storing randomNameUpdated with correct length as a collection variable to be used in the body \r",
+													"pm.collectionVariables.set(\"employeeNameUpdated\", randomNameUpdated);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"{{employeeNameUpdated}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{employeeId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "400 Bad request",
+							"item": [
+								{
+									"name": "Update employee 400",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"{{employeeNameUpdated}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "-1"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "422 Unprocessable entity",
+							"item": [
+								{
+									"name": "Update employee 422",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 422\", () => {\r",
+													"    pm.response.to.have.status(422);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{employeeId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Update check",
+							"item": [
+								{
+									"name": "Get employee by id 200 check",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 200\", () => {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"//Verifying if response is in JSON format\r",
+													"pm.test(\"Response is JSON\", () => {\r",
+													"    pm.response.to.be.json;\r",
+													"});\r",
+													"\r",
+													"//Parsing JSON response for data verification\r",
+													"const responseJson = pm.response.json();\r",
+													"\r",
+													"//Verifying if response includes \"name\"\r",
+													"pm.test(\"Response contains 'name' property\", () => {\r",
+													"    pm.expect(responseJson).to.have.property(\"name\");\r",
+													"});\r",
+													"\r",
+													"//Verifying if employeeNameUpdated is correct for this employeeId\r",
+													"pm.test(\"Verifying updated name for this id\", () => {\r",
+													"    pm.expect(responseJson.name).to.eql(pm.collectionVariables.get(\"employeeNameUpdated\"));\r",
+													"});\r",
+													"\r",
+													"console.log(responseJson.name);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{employeeId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get employee by name 200 check",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 200\", () => {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"//Verifying if response is in JSON format\r",
+													"pm.test(\"Response is JSON\", () => {\r",
+													"    pm.response.to.be.json;\r",
+													"});\r",
+													"\r",
+													"//Parsing JSON response for data verification\r",
+													"const responseJson = pm.response.json();\r",
+													"\r",
+													"//Verifying if employeeNameUpdated has correct employeeId\r",
+													"//Since there is more than 1 employee with employeeNameUpdated, all ids for this name need to be extracted first and then the extracted array (with ids) is checked for the correct id\r",
+													"const employeeIds = responseJson.map((o) => o.id);\r",
+													"\r",
+													"pm.test(\"Response (array) contains correct id\", () => {\r",
+													"    pm.expect(employeeIds).to.include(pm.collectionVariables.get(\"employeeId\"));\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":name"
+											],
+											"variable": [
+												{
+													"key": "name",
+													"value": "{{employeeNameUpdated}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Delete",
+					"item": [
+						{
+							"name": "200 OK",
+							"item": [
+								{
+									"name": "Delete employee 200",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 200\", () => {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{employeeId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "400 Bad request",
+							"item": [
+								{
+									"name": "Delete employee 400",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 400\", () => {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "-1"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "404 Not found",
+							"item": [
+								{
+									"name": "Delete employee 404",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 404\", () => {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{invalidId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Delete check",
+							"item": [
+								{
+									"name": "Get deleted employee",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//Validating status code\r",
+													"pm.test(\"Status code is 404\", () => {\r",
+													"    pm.response.to.have.status(404);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/employee/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"employee",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "{{employeeId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://192.168.200.220:5167",
+			"type": "string"
+		},
+		{
+			"key": "employeeId",
+			"value": ""
+		},
+		{
+			"key": "employeeName",
+			"value": ""
+		},
+		{
+			"key": "invalidId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "employeeNameUpdated",
+			"value": ""
+		}
+	]
+}
